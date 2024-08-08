@@ -1,4 +1,5 @@
 import yfinance as yf
+import numpy as np
 
 class IndexFundAPI():
   def __init__(self):
@@ -8,13 +9,22 @@ class IndexFundAPI():
     self.__all = [self.__sp_500, self.__nasdaq, self.__dow]
 
   def clean_data(self, data):
-    del data['Dividends']
-    del data['Stock Splits']
-    data = data.loc['1990-01-01':].copy()
-    data = data.resample('D').mean() 
-    data['Tomorrow'] = data['Close'].shift(-1)
-    data['Target'] = (data['Tomorrow'] > data['Close']).astype(int)  
-    return data
+      del data['Dividends']
+      del data['Stock Splits']
+      del data['High']
+      del data['Low']
+      del data['Volume']
+      data = data.loc['1990-01-01':].copy()
+      data = data.resample('D').mean() 
+      not_NaN = (data['Open'].notna()) & (data['Close'].notna())
+      growth = (data['Close'] - data['Open']) / data['Open']
+      data['Growth'] = np.where(not_NaN & (data['Open'] != 0), growth, np.nan)
+
+      inc = (data['Close'] > data['Open'])
+      eq = (data['Close'] == data['Open'])
+      data['Result'] = np.where(not_NaN & inc, 1, \
+                        np.where(not_NaN & eq, np.nan, np.where(not_NaN, 0, np.nan)))
+      return data
 
   def sp_500_data(self):
     self.__sp_500 = self.clean_data(self.__sp_500)
