@@ -31,9 +31,15 @@ StockTickerDatabase.create_sets_table(CONN)
 # growth_test_data = base.score(pattern.ScoringSystems().growth_scoring, start_date='2023-01-01')
 # StockTickerDatabase.insert_set(CONN, 'Growth Scoring start=2024-01-01', growth_test_data)
 
+# result_train_data = StockTickerDatabase.delete_set(CONN, 'Result Scoring end=2023-12-31')
+# growth_train_data = StockTickerDatabase.delete_set(CONN, 'Growth Scoring end=2023-12-31')
+
+# result_test_data = StockTickerDatabase.delete_set(CONN, 'Result Scoring start=2024-01-01')
+# growth_test_data = StockTickerDatabase.delete_set(CONN, 'Growth Scoring start=2024-01-01')
+
 #Test to check all information is stored correctly
 #The set_names variable below needs to be updated as new information is uploaded. 
-set_names = ['All Stock Tickers', 'S&P500 Data', 'Nasdaq Data', 'DOW Data', 'Penny Stocks','Result Scoring end=2023-12-31','Growth Scoring end=2023-12-31', 'Result Scoring start=2024-01-01', 'Growth Scoring start=2024-01-01']
+set_names = ['All Stock Tickers', 'S&P500 Data', 'Nasdaq Data', 'DOW Data', 'Penny Stocks']
 actual_names = StockTickerDatabase.retrieve_sets(CONN)
 
 assert actual_names == set_names
