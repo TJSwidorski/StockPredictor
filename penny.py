@@ -39,6 +39,3 @@ class PennyStocks():
 
   def get_penny_stocks(self):
     return self.__penny_stocks
-  
-penny_stocks = PennyStocks('2024-08-07')
-print(penny_stocks.get_penny_stocks())
