@@ -37,12 +37,3 @@ class IndexFundAPI():
   def dow_data(self):
     self.__dow = self.clean_data(self.__dow)
     return self.__dow
-
-indFund = IndexFundAPI()
-sp = indFund.sp_500_data()
-n = indFund.nasdaq_data()
-d = indFund.dow_data()
-
-print(f'sp_500 data: {sp}')
-print(f'nasdaq data: {n}')
-print(f'dow data: {d}')
