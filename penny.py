@@ -2,7 +2,7 @@ import ticker
 import yfinance as yf
 
 class PennyStocks():
-  def __init__(self, date):
+  def __init__(self):
     """
     Where [date] is the current date.
     """
@@ -14,8 +14,8 @@ class PennyStocks():
       count += 1
       print(f'{count} of {len(self.__ticker_pool)}')
       try:
-        stock = yf.download(t, start=date)
-        if stock['Close'].item() <= 5:
+        stock = yf.download(t)
+        if stock['Close'].iloc[-1] <= 5:
           self.__penny_stocks.add(t)
       except:
         continue
