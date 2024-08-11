@@ -2,123 +2,76 @@ import yfinance as yf
 import numpy as np
 import statistics
 
-class ResultPattern():
+class Pattern():
   def __init__(self, ticker_set):
     self.__tickers = ticker_set
     self.__score_results = None
 
-  def __remove_none(self, result_list):
+  def __create_top_x(self, x, sorted_dict):
     """
-    Removes all None values from the list and returns the mean of the list.
-    """
-    results = []
-    for r in result_list:
-      if r != None:
-        results.append(r)
-  
-    return statistics.mean(results)
-  
-  def __create_top_ten(self, sorted_dict):
-    """
-    Given a sorted dictionary, returns the top ten values as a list of ten
+    Given a sorted dictionary, returns the top [x] values as a list of
     (key, value) tuples.
     """
-    top_ten = []
-    for key, value in sorted_dict[:10]:
-      top_ten.append((key, value))
+    top_x = []
+    for key, value in sorted_dict[:x]:
+      top_x.append((key, value))
 
-    return top_ten
+    return top_x
+  
+  def __check_dates(self, ticker, start_date, end_date):
+    if start_date and end_date:
+      stock = yf.download(ticker, start=start_date, end=end_date)
+    elif start_date:
+      stock = yf.download(ticker, start=start_date)
+    elif end_date:
+      stock = yf.download(ticker, end=end_date)
+    else:
+      stock = yf.download(ticker)
 
-  def score(self, end_date):
+    return stock
+  
+  def score(self, scoring: callable, start_date: str = None, end_date: str = None):
     """
     Scores all of the stock tickers within the set [self.__tickers] to find
-    the highest result frequencies up to [end_date].
+    the highest scoring given scoring class [type] and may include [start_date]
+    and/or [end_date].
     """
-    results_dict = {}
+    accum_dict = {}
     progress = 0
     for ticker in self.__tickers:
       progress += 1
-      print(f'Progress: {progress} of {len(self.__tickers)}')
       try:
-        stock = yf.download(ticker, end=end_date)
-        stock['Result'] = \
-          np.where(stock['Close'] > stock['Open'], 1, \
-            np.where(stock['Close'] == stock['Open'], None, 0))
-        ticker_results = self.__remove_none(list(stock['Result']))
-        results_dict[ticker] = ticker_results
+        stock = self.__check_dates(ticker, start_date, end_date)
+        ticker_score = scoring(stock)
+        accum_dict[ticker] = ticker_score
       except:
         continue
-    
-    sorted_results = sorted(results_dict.items(), \
+
+    sorted_results = sorted(accum_dict.items(), \
                             key=lambda item: item[1], reverse=True)
     self.__score_results = sorted_results
 
     return sorted_results
-
-  def get_top_ten(self):
+  
+  def get_top_x(self, x):
     """
     Returns the top ten values of the scored results in [self.__score_results]
     """
-    return self.__create_top_ten(self.__score_results)
-
-class GrowthPattern():
-  def __init__(self, ticker_set):
-    self.__tickers = ticker_set
-    self.__score_results = None
-
-  def __find_open(self, stock):
-    """
-    Finds the first [open_index] where the open value is not zero.
-    """
+    return self.__create_top_x(x, self.__score_results)
+  
+class ScoringSystems():
+  def result_scoring(stock):
+    stock['Result'] = np.where(stock['Close'] > stock['Open'], 1, \
+                      np.where(stock['Close'] == stock['Open'], None, 0))
+    return statistics.mean([r for r in stock['Result'] if r is not None])
+  
+  def growth_scoring(stock):
     open_index = 0
     while stock['Open'].iloc[open_index] == 0:
       open_index += 1
       if open_index >= len(stock):
         break
-    
-    return open_index
-  
-  def __create_top_ten(self, sorted_dict):
-    """
-    Given a sorted dictionary, returns the top ten values as a list of ten
-    (key, value) tuples.
-    """
-    top_ten = []
-    for key, value in sorted_dict[:10]:
-      top_ten.append((key, value))
 
-    self.__top_ten = top_ten
-
-  def score(self, end_date):
-    """
-    Scores all of the stock tickers within the set [self.__tickers] to find
-    the highest growth rates up to [end_date].
-    """    
-    growth_dict = {}
-    progress = 0
-    for ticker in self.__tickers:
-      progress += 1
-      print(f'Progress: {progress} of {len(self.__tickers)}')
-      try:
-        stock = yf.download(ticker, end=end_date)
-        open_index = self.__find_open(stock)
-        if open_index >= len(stock):
-          continue
-        first_open = stock['Open'].iloc[open_index]
-        last_close = stock['Close'].iloc[-1]
-        ticker_growth = (last_close - first_open) / first_open
-        growth_dict[ticker] = ticker_growth
-      except:
-        continue
-    
-    sorted_results = sorted(growth_dict.items(), \
-                            key=lambda item: item[1], reverse=True)
-    self.__score_results = sorted_results
-
-    return sorted_results
-
-  def get_top_ten(self):
-    """
-    Returns the top ten values of the scored results in [self.__score_results]
-    """
-    return self.__create_top_ten(self.__score_results)
+    first_open = stock['Open'].iloc[open_index]
+    last_close = stock['Close'].iloc[-1]
+    return (last_close - first_open) / first_open
