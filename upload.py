@@ -15,11 +15,11 @@ StockTickerDatabase.create_sets_table(CONN)
 # StockTickerDatabase.insert_set(CONN, 'S&P500 Data', index.IndexFundAPI().sp_500_data())
 # StockTickerDatabase.insert_set(CONN, 'Nasdaq Data', index.IndexFundAPI().nasdaq_data())
 # StockTickerDatabase.insert_set(CONN, 'DOW Data', index.IndexFundAPI().dow_data())
-StockTickerDatabase.insert_set(CONN, 'Penny Stocks', penny.PennyStocks().get_penny_stocks())
+# StockTickerDatabase.insert_set(CONN, 'Penny Stocks', penny.PennyStocks().get_penny_stocks())
 
 #Test to check all information is stored correctly
 #The set_names variable below needs to be updated as new information is uploaded. 
-set_names = ['All Stock Tickers', 'S&P500 Data', 'Nasdaq Data', 'DOW Data']
+set_names = ['All Stock Tickers', 'S&P500 Data', 'Nasdaq Data', 'DOW Data', 'Penny Stocks']
 actual_names = StockTickerDatabase.retrieve_sets(CONN)
 
 assert actual_names == set_names
