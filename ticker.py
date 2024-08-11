@@ -1,5 +1,4 @@
 from yahoo_fin import stock_info as si
-import yfinance as yf
 import pandas as pd
 
 class TickerAPI():
@@ -52,19 +51,3 @@ class TickerAPI():
   def all_tickers(self):
     all_tickers = self.__get_tickers(self.__all_tickers)
     return all_tickers
-  
-stonks = TickerAPI().sp_500_tickers()
-print(stonks)
-print(len(stonks))
-stonks = TickerAPI().nasdaq_tickers()
-print(stonks)
-print(len(stonks))
-stonks = TickerAPI().dow_tickers()
-print(stonks)
-print(len(stonks))
-stonks = TickerAPI().other_tickers()
-print(stonks)
-print(len(stonks))
-stonks = TickerAPI().all_tickers()
-print(stonks)
-print(len(stonks))
