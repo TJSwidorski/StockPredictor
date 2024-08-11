@@ -85,9 +85,26 @@ class Portfolio():
     end_amount = standard_portfolio.get_end_amount()
     return (result, percent_change, end_amount)
 
-#Test Portfolio creation and investment for Results Pattern
-P = Portfolio(normalize(pattern.train_results))
-P.invest('2024-01-01', '2024-08-10', 100)
+# #Test Portfolio creation and investment for Results Pattern
+# P = Portfolio(normalize(pattern.train_results))
+# P.invest('2024-01-01', '2024-08-10', 100)
+# result = P.get_result()
+# percent_change = P.get_percent_change()
+# end_amount = P.get_end_amount()
+# print('\nPenny stock results: ')
+# print(f'Penny result amount: {result}')
+# print(f'Percent change: {percent_change}')
+# print(f'End amount: {end_amount}\n')
+# standard, p_change, e_amount = P.find_standard('2024-01-01', '2024-08-10', 100)
+# print('Standard market results: ')
+# print(f'Standard result amount: {standard}')
+# print(f'Percent change: {p_change}')
+# print(f'End amount: {e_amount}')
+
+#Test Portfolio creation and investment for Growth Pattern
+growth_results = [('AIRE', 0.27839542578032483), ('NCPL', 0.09223411063277098), ('BGLC', 0.0673196223644636), ('SPCB', 0.06159253432377002), ('HEPA', 0.06107041613372484), ('HGBL', 0.055460440292120536), ('SGD', 0.05485006150862806), ('ATXG', 0.051840143090135536), ('RVYL', 0.0497517826287461), ('RCAT', 0.04914376887215534)]
+P = Portfolio(normalize(growth_results))
+P.invest('2024-01-01', '2024-08-10', 1000)
 result = P.get_result()
 percent_change = P.get_percent_change()
 end_amount = P.get_end_amount()
@@ -95,7 +112,7 @@ print('\nPenny stock results: ')
 print(f'Penny result amount: {result}')
 print(f'Percent change: {percent_change}')
 print(f'End amount: {end_amount}\n')
-standard, p_change, e_amount = P.find_standard('2024-01-01', '2024-08-10', 100)
+standard, p_change, e_amount = P.find_standard('2024-01-01', '2024-08-10', 1000)
 print('Standard market results: ')
 print(f'Standard result amount: {standard}')
 print(f'Percent change: {p_change}')
