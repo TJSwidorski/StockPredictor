@@ -98,16 +98,17 @@ class GrowthPattern():
     self.__tickers = ticker_set
     self.__top_ten = None
 
-  def __remove_none(self, result_list):
+  def __find_open(self, stock):
     """
     Removes all None values from the list and returns the mean of the list.
     """
-    results = []
-    for r in result_list:
-      if (r != None) and (r != 0):
-        results.append(r)
-  
-    return statistics.mean(results)
+    open_index = 0
+    while stock['Open'].iloc[open_index] == 0:
+      open_index += 1
+      if open_index >= len(stock):
+        break
+    
+    return open_index
   
   def __create_top_ten(self, sorted_dict):
     """
@@ -129,10 +130,12 @@ class GrowthPattern():
       print(f'Progress: {progress} of {len(self.__tickers)}')
       try:
         stock = yf.download(ticker, end=end_date)
-        stock['Growth'] = \
-          np.where(stock['Open'] != 0, \
-                   (stock['Close'] - stock['Open']) / stock['Open'], None) 
-        ticker_growth = self.__remove_none(list(stock['Growth']))
+        open_index = self.__find_open(stock)
+        if open_index >= len(stock):
+          continue
+        first_open = stock['Open'].iloc[open_index]
+        last_close = stock['Close'].iloc[-1]
+        ticker_growth = (last_close - first_open) / first_open
         growth_dict[ticker] = ticker_growth
       except:
         continue
@@ -152,11 +155,13 @@ class GrowthPattern():
       print(f'Progress: {progress} of {len(self.__top_ten)}')
       try:
         stock = yf.download(ticker, start=start_date)
-        stock['Growth'] = \
-          np.where(stock['Open'] != 0, \
-                   (stock['Close'] - stock['Open']) / stock['Open'], None)
-        ticker_results = self.__remove_none(list(stock['Growth']))
-        growth_dict[ticker] = ticker_results
+        open_index = self.__find_open(stock)
+        if open_index >= len(stock):
+          continue
+        first_open = stock['Open'].iloc[open_index]
+        last_close = stock['Close'].iloc[-1]
+        ticker_growth = (last_close - first_open) / first_open
+        growth_dict[ticker] = ticker_growth
       except:
         continue
     
