@@ -28,7 +28,7 @@ class StockTickerDatabase:
         :param set_name: Name of the set
         :param set_data: Set data (list of strings)
         """
-        serialized_data = json.dumps(set_data)  # Serialize the set to JSON string
+        serialized_data = json.dumps(list(set_data))  # Serialize the set to JSON string
         cursor = connection.cursor()
         cursor.execute("INSERT INTO sets (set_name, set_data) VALUES (?, ?)", (set_name, serialized_data))
         connection.commit()
@@ -84,7 +84,7 @@ class StockTickerDatabase:
         :param set_name: Name of the set to update
         :param new_set_data: New set data (list of strings)
         """
-        serialized_data = json.dumps(new_set_data)  # Serialize the new set data to JSON string
+        serialized_data = json.dumps(list(new_set_data))  # Serialize the new set data to JSON string
         cursor = connection.cursor()
         cursor.execute("UPDATE sets SET set_data = ? WHERE set_name = ?", (serialized_data, set_name))
         connection.commit()
