@@ -7,7 +7,7 @@ import statistics
 class ResultPattern():
   def __init__(self, ticker_set):
     self.__tickers = ticker_set
-    self.__top_ten = None
+    self.__score_results = None
 
   def __remove_none(self, result_list):
     """
@@ -29,10 +29,13 @@ class ResultPattern():
     for key, value in sorted_dict[:10]:
       top_ten.append((key, value))
 
-    self.__top_ten = top_ten
+    return top_ten
 
-  def top_ten_train(self, end_date):
-    #Find the top ten stocks with the highest result frequencies given the end date for the "training" data
+  def score(self, end_date):
+    """
+    Scores all of the stock tickers within the set [self.__tickers] to find
+    the highest result frequencies up to [end_date].
+    """
     results_dict = {}
     progress = 0
     for ticker in self.__tickers:
@@ -50,37 +53,13 @@ class ResultPattern():
     
     sorted_results = sorted(results_dict.items(), \
                             key=lambda item: item[1], reverse=True)
-    self.__create_top_ten(sorted_results)
 
-    return self.__top_ten
-  
-  def top_ten_test(self, start_date):
-    #Test the top ten stocks beginning at the start date and record their frequencies.
-    results_dict = {}
-    progress = 0
-    for ticker, _ in self.__top_ten:
-      progress += 1
-      print(f'Progress: {progress} of {len(self.__top_ten)}')
-      try:
-        stock = yf.download(ticker, start=start_date)
-        stock['Result'] = \
-          np.where(stock['Close'] > stock['Open'], 1, \
-            np.where(stock['Close'] == stock['Open'], None, 0))
-        ticker_results = self.__remove_none(list(stock['Result']))
-        results_dict[ticker] = ticker_results
-      except:
-        continue
-    
-    sorted_results = sorted(results_dict.items(), \
-                            key=lambda item: item[1], reverse=True)
+    self.__score_results = sorted_results
 
     return sorted_results
-  
-  def set_top_ten(self, sorted_results):
-    self.__top_ten = sorted_results
 
   def get_top_ten(self):
-    return self.__top_ten
+    return self.__create_top_ten(self.__score_results)
 
 #Test ResultPattern for Penny Stocks
 # CONN = sqlite3.connect("stock_tickers.db")
