@@ -62,3 +62,31 @@ class StockTickerDatabase:
         cursor.execute("SELECT set_name FROM sets")
         set_names = [row[0] for row in cursor.fetchall()]
         return set_names
+    
+    @staticmethod
+    def delete_set(connection, set_name):
+        """
+        Delete a set from the database.
+
+        :param connection: SQLite database connection
+        :param set_name: Name of the set to delete
+        """
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM sets WHERE set_name = ?", (set_name,))
+        connection.commit()
+
+    @staticmethod
+    def update_set(connection, set_name, new_set_data):
+        """
+        Update an existing set in the database.
+
+        :param connection: SQLite database connection
+        :param set_name: Name of the set to update
+        :param new_set_data: New set data (list of strings)
+        """
+        serialized_data = json.dumps(new_set_data)  # Serialize the new set data to JSON string
+        cursor = connection.cursor()
+        cursor.execute("UPDATE sets SET set_data = ? WHERE set_name = ?", (serialized_data, set_name))
+        connection.commit()
+
+    
