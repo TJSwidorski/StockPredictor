@@ -40,6 +40,7 @@ class Pattern():
     progress = 0
     for ticker in self.__tickers:
       progress += 1
+      print(f'Progress: {progress} of {len(self.__tickers)}')
       try:
         stock = self.__check_dates(ticker, start_date, end_date)
         ticker_score = scoring(stock)
