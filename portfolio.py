@@ -27,46 +27,24 @@ class Portfolio():
     self.__current_amount = None
     self.__percent_change = None
 
-  def invest(self, start_date, end_date, investment_amount):
-    self.__current_amount = investment_amount
-    for ticker, portion in self.__portfolio:
-      stock = yf.download(ticker, start=start_date, end=end_date)
+  def invest(self, start_date, end_date, total_investment_amount):
+        self.__current_amount = total_investment_amount
+        self.__results = []
+        for ticker, portion in self.__portfolio:
+            stock = yf.download(ticker, start=start_date, end=end_date)
+            first_open = stock['Open'].iloc[0]
+            last_close = stock['Close'].iloc[-1]
 
-      day_start = investment_amount * portion
-      number_of_shares = day_start / stock['Open'].iloc[0]
+            start_amount = total_investment_amount * portion
+            number_of_shares = start_amount / first_open
+            end_amount = last_close * number_of_shares
 
-      day_start_totals = [day_start]
-      day_end_totals = []
-      profits_losses = []
+            self.__results.append(end_amount)
 
-      for i in range(len(stock)):
-        if i > 0:
-          day_start = day_end_totals[i-1]
-          number_of_shares = day_start / stock['Open'].iloc[i]
-
-          day_start_totals.append(day_start)
-
-        day_end = number_of_shares * stock['Close'].iloc[i]
-        profit_loss = (stock['Close'].iloc[i] - stock['Open'].iloc[i]) * number_of_shares
-
-        day_end_totals.append(day_end)
-        profits_losses.append(profit_loss)
-
-      stock['Day Start'] = day_start_totals
-      stock['Day End'] = day_end_totals
-      stock['Profit/Loss'] = profits_losses
-      # print(stock)
-
-      total_profit_loss = day_end_totals[-1] - investment_amount * portion
-      self.__results.append(total_profit_loss)
-
-    #Returns the overall increase/decrease, not the percent increase/decrease
-    self.__result = sum(self.__results)
-    self.__current_amount = self.__result + investment_amount
-    self.__percent_change = self.__result / investment_amount 
-    #Could return + investment_amount to have current amount
-    #Could return percent increase/decrease
-  
+        self.__current_amount = sum(self.__results)
+        self.__result = self.__current_amount - total_investment_amount
+        self.__percent_change = (self.__current_amount - total_investment_amount) / total_investment_amount
+      
   def get_result(self):
     return self.__result
   
@@ -102,19 +80,19 @@ class Portfolio():
 # print(f'End amount: {e_amount}')
 
 #Test Portfolio creation and investment for Growth Pattern
-growth_results = [('FSI', 317.3333250031704), ('PRPH', 35.15999984741211), ('ZJYL', 30.0062499194406), ('KRMD', 21.318181245533886), ('ACCD', 20.836363579221995), ('NTIP', 15.76923189783947), ('RFIL', 15.213333129882812), ('SOTK', 14.738181374289773), ('GGB', 12.61880750537609), ('JCTCF', 11.611599507221607)]
-P = Portfolio(normalize(growth_results))
-P.invest('2024-01-01', '2024-08-10', 1000)
-result = P.get_result()
-percent_change = P.get_percent_change()
-end_amount = P.get_end_amount()
-print('\nPenny stock results: ')
-print(f'Penny result amount: {result}')
-print(f'Percent change: {percent_change}')
-print(f'End amount: {end_amount}\n')
-standard, p_change, e_amount = P.find_standard('2024-01-01', '2024-08-10', 1000)
-print('Standard market results: ')
-print(f'Standard result amount: {standard}')
-print(f'Percent change: {p_change}')
-print(f'End amount: {e_amount}')
+# growth_results = [('FSI', 317.3333250031704), ('PRPH', 35.15999984741211), ('ZJYL', 30.0062499194406), ('KRMD', 21.318181245533886), ('ACCD', 20.836363579221995), ('NTIP', 15.76923189783947), ('RFIL', 15.213333129882812), ('SOTK', 14.738181374289773), ('GGB', 12.61880750537609), ('JCTCF', 11.611599507221607)]
+# P = Portfolio(normalize(growth_results))
+# P.invest('2024-01-01', '2024-08-10', 1000)
+# result = P.get_result()
+# percent_change = P.get_percent_change()
+# end_amount = P.get_end_amount()
+# print('\nPenny stock results: ')
+# print(f'Penny result amount: {result}')
+# print(f'Percent change: {percent_change}')
+# print(f'End amount: {end_amount}\n')
+# standard, p_change, e_amount = P.find_standard('2024-01-01', '2024-08-10', 1000)
+# print('Standard market results: ')
+# print(f'Standard result amount: {standard}')
+# print(f'Percent change: {p_change}')
+# print(f'End amount: {e_amount}')
 
