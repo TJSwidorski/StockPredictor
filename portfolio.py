@@ -1,5 +1,7 @@
 import yfinance as yf
 import pattern
+import sqlite3
+import database 
 
 def normalize(tuple_group):
   total = 0
@@ -62,37 +64,24 @@ class Portfolio():
     percent_change = standard_portfolio.get_percent_change()
     end_amount = standard_portfolio.get_end_amount()
     return (result, percent_change, end_amount)
+  
+#Test Portfolio cration and investment for any pattern
+CONN = sqlite3.connect('stock_ticker_data_2024-08-11.db')
+growth_train_data = database.StockTickerDatabase.retrieve_set(CONN, 'Growth Scoring end=2023-12-31')
+top_ten = growth_train_data
 
-# #Test Portfolio creation and investment for Results Pattern
-# P = Portfolio(normalize(pattern.train_results))
-# P.invest('2024-01-01', '2024-08-10', 100)
-# result = P.get_result()
-# percent_change = P.get_percent_change()
-# end_amount = P.get_end_amount()
-# print('\nPenny stock results: ')
-# print(f'Penny result amount: {result}')
-# print(f'Percent change: {percent_change}')
-# print(f'End amount: {end_amount}\n')
-# standard, p_change, e_amount = P.find_standard('2024-01-01', '2024-08-10', 100)
-# print('Standard market results: ')
-# print(f'Standard result amount: {standard}')
-# print(f'Percent change: {p_change}')
-# print(f'End amount: {e_amount}')
-
-#Test Portfolio creation and investment for Growth Pattern
-# growth_results = [('FSI', 317.3333250031704), ('PRPH', 35.15999984741211), ('ZJYL', 30.0062499194406), ('KRMD', 21.318181245533886), ('ACCD', 20.836363579221995), ('NTIP', 15.76923189783947), ('RFIL', 15.213333129882812), ('SOTK', 14.738181374289773), ('GGB', 12.61880750537609), ('JCTCF', 11.611599507221607)]
-# P = Portfolio(normalize(growth_results))
-# P.invest('2024-01-01', '2024-08-10', 1000)
-# result = P.get_result()
-# percent_change = P.get_percent_change()
-# end_amount = P.get_end_amount()
-# print('\nPenny stock results: ')
-# print(f'Penny result amount: {result}')
-# print(f'Percent change: {percent_change}')
-# print(f'End amount: {end_amount}\n')
-# standard, p_change, e_amount = P.find_standard('2024-01-01', '2024-08-10', 1000)
-# print('Standard market results: ')
-# print(f'Standard result amount: {standard}')
-# print(f'Percent change: {p_change}')
-# print(f'End amount: {e_amount}')
+folder = Portfolio(normalize(top_ten))
+folder.invest('2024-01-01', '2024-08-11', 10000)
+result = folder.get_result()
+percent_change = folder.get_percent_change()
+end_amount = folder.get_end_amount()
+print('\nPenny stock results: ')
+print(f'Penny result amount: {result}')
+print(f'Percent change: {percent_change}')
+print(f'End amount: {end_amount}\n')
+standard, p_change, e_amount = folder.find_standard('2024-01-01', '2024-08-11', 10000)
+print('Standard market results: ')
+print(f'Standard result amount: {standard}')
+print(f'Percent change: {p_change}')
+print(f'End amount: {e_amount}')
 
