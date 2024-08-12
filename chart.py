@@ -39,6 +39,14 @@ result_test_data = StockTickerDatabase.retrieve_set(CONN, 'Result Scoring start=
 growth_train_data = StockTickerDatabase.retrieve_set(CONN, 'Growth Scoring end=2023-12-31')
 growth_test_data = StockTickerDatabase.retrieve_set(CONN, 'Growth Scoring start=2024-01-01')
 
+
+all_result_train_data = StockTickerDatabase.retrieve_set(CONN, 'All Result Scoring end=2023-12-31')
+all_result_test_data = StockTickerDatabase.retrieve_set(CONN, 'All Result Scoring start=2024-01-01')
+
+all_growth_train_data = StockTickerDatabase.retrieve_set(CONN, 'All Growth Scoring end=2023-12-31')
+all_growth_test_data = StockTickerDatabase.retrieve_set(CONN, 'All Growth Scoring start=2024-01-01')
+
+
 rx_data, ry_data = sync_lists(result_train_data, result_test_data)
 gx_data, gy_data = sync_lists(growth_train_data, growth_test_data)
 
@@ -47,6 +55,14 @@ ry = [ry for _, ry in ry_data]
 gx = [gx for _, gx in gx_data]
 gy = [gy for _, gy in gy_data]
 
+arx_data, ary_data = sync_lists(all_result_train_data, all_result_test_data)
+agx_data, agy_data = sync_lists(all_growth_train_data, all_growth_test_data)
+
+arx = [rx for _, rx in arx_data]
+ary = [ry for _, ry in ary_data]
+agx = [gx for _, gx in agx_data]
+agy = [gy for _, gy in agy_data]
+
 if __name__ == '__main__':
-  result_scatter = StockGraph(rx, ry).scatter('Result Scoring Analysis')
-  growth_scatter = StockGraph(gx, gy).scatter('Growth Scoring Analysis')
+  result_scatter = StockGraph(arx, ary).scatter('All Result Scoring Analysis')
+  growth_scatter = StockGraph(agx, agy).scatter('All Growth Scoring Analysis')
