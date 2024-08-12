@@ -32,9 +32,23 @@ StockTickerDatabase.create_sets_table(CONN)
 # growth_test_data = base.score(pattern.ScoringSystems.growth_scoring, start_date='2023-01-01')
 # StockTickerDatabase.insert_set(CONN, 'Growth Scoring start=2024-01-01', growth_test_data)
 
+# all_tickers = StockTickerDatabase.retrieve_set(CONN, 'All Stock Tickers')
+# base = pattern.Pattern(all_tickers)
+
+# result_train_data = base.score(pattern.ScoringSystems.result_scoring, end_date='2023-12-31')
+# StockTickerDatabase.insert_set(CONN, 'All Result Scoring end=2023-12-31', result_train_data)
+
+# growth_train_data = base.score(pattern.ScoringSystems.growth_scoring, end_date='2023-12-31')
+# StockTickerDatabase.insert_set(CONN, 'All Growth Scoring end=2023-12-31', growth_train_data)
+
+# result_test_data = base.score(pattern.ScoringSystems.result_scoring, start_date='2023-01-01')
+# StockTickerDatabase.insert_set(CONN, 'All Result Scoring start=2024-01-01', result_test_data)
+# growth_test_data = base.score(pattern.ScoringSystems.growth_scoring, start_date='2023-01-01')
+# StockTickerDatabase.insert_set(CONN, 'All Growth Scoring start=2024-01-01', growth_test_data)
+
 #Test to check all information is stored correctly
 #The set_names variable below needs to be updated as new information is uploaded. 
-set_names = ['All Stock Tickers', 'S&P500 Data', 'Nasdaq Data', 'DOW Data', 'Penny Stocks', 'Result Scoring end=2023-12-31', 'Growth Scoring end=2023-12-31', 'Result Scoring start=2024-01-01', 'Growth Scoring start=2024-01-01']
+set_names = ['All Stock Tickers', 'S&P500 Data', 'Nasdaq Data', 'DOW Data', 'Penny Stocks', 'Result Scoring end=2023-12-31', 'Growth Scoring end=2023-12-31', 'Result Scoring start=2024-01-01', 'Growth Scoring start=2024-01-01', 'All Result Scoring end=2023-12-31', 'All Growth Scoring end=2023-12-31', 'All Result Scoring start=2024-01-01', 'All Growth Scoring start=2024-01-01']
 actual_names = StockTickerDatabase.retrieve_sets(CONN)
 
 assert actual_names == set_names
